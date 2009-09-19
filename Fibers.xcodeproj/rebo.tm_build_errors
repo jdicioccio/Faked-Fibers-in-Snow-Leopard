@@ -1,0 +1,2 @@
+2009-09-19 18|32|37.257 xcodebuild[1027:80b] Unable to load platform at path /Developer/Platforms/iPhoneOS.platform
+/Users/rebo/Code/projects/cocoa/Fibers/Fiber.m|84|warning: implicit declaration of function ‘dispatch_queue’

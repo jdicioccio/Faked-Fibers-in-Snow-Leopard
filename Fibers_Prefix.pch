@@ -1,0 +1,7 @@
+//
+// Prefix header for all source files of the 'Fibers' target in the 'Fibers' project
+//
+
+#ifdef __OBJC__
+    #import <Cocoa/Cocoa.h>
+#endif

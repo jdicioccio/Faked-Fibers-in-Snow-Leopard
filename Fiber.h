@@ -17,6 +17,7 @@
   SemaphoredArray * _resumeSemaphoreArray;
   BOOL _isBlockCompleted;
   BOOL _isQueueSuspended;
+  BOOL _willBeCancelled;
 }
 
 //property thread
@@ -27,8 +28,9 @@
 -(id) resumeWithArgument:(id) obj;
 -(id) resumeWithArgument:(id) obj error:(NSError **)error;
 +(id) yieldWithArgument:(id)obj;
-
+-(void) cancel;
++(BOOL) willBeCancelled;
 @property (assign) BOOL isBlockCompleted;
 @property (assign) BOOL isQueueSuspended;
-
+@property (assign) BOOL willBeCancelled;
 @end

@@ -12,20 +12,20 @@
   {
     _que = [NSMutableArray array];
     _array_semaphore = sema;
+    dispatch_retain(_array_semaphore);
   }
   return self;
 }
 
 -(void)push:(id) obj;
 {
+  if (!obj)
+  {
+    obj = [NSNull null];    
+  }
   [_que addObject:obj];
 
-  int i = dispatch_semaphore_signal( _array_semaphore);
-
-  if (i){
-
-  }
-
+   dispatch_semaphore_signal( _array_semaphore);
 };
 
 
@@ -46,6 +46,14 @@
   }
   }
 }
+  
+  
+-(void) finalize;
+{ 
+  [super finalize];
+  dispatch_release(_array_semaphore);
+}
+
 
 @end
 

@@ -20,6 +20,7 @@
 @implementation Fiber
 @synthesize isBlockCompleted =_isBlockCompleted;
 @synthesize isQueueSuspended = _isQueueSuspended;
+@synthesize willBeCancelled = _willBeCancelled;
 
 -(id) initWithBlock:(FiberBlk_t) block;
 {
@@ -28,7 +29,7 @@
 
   // Create a dispatch queue for the fiber
   _fiberQueue = dispatch_queue_create("fiber.queue.com", NULL);
-  
+  dispatch_retain(_fiberQueue);
   // set context of fiberQueue to the fiber instance, so we can 
   // refer to the fiber from within the queue
   
@@ -54,9 +55,10 @@
 
   self.isBlockCompleted = NO;
   
-  dispatch_async(_fiberQueue, ^{ 
+  dispatch_async(_fiberQueue, ^{ if (!(self.willBeCancelled)){
     [_yieldSemaphoreArray push:block( [_resumeSemaphoreArray pop])]; 
     self.isBlockCompleted  = YES;
+    }
   });    
   return self;
 }
@@ -125,17 +127,63 @@
 	
 }
 
++(Fiber *) current;
+{
+  dispatch_queue_t que = dispatch_get_current_queue();
+  Fiber * fiber = dispatch_get_context( que );
+
+  return fiber;
+}
+
 +(id) yieldWithArgument:(id)obj;
 {
   // this is a class method called within a fibers block
   // we need a way of getting the fiber from the block
   // this is done by getting the queue context which in this case
   // is the fiber
-  
-  dispatch_queue_t que = dispatch_get_current_queue();
-  Fiber * fiber = dispatch_get_context( que );
-  
+  Fiber * fiber = [Fiber current];
   return [fiber yield:obj];
 }
+
++(BOOL) willBeCancelled;
+{
+  // returns the willBeCancelled property of the current fiber
+  // This is used to escape from an infinite loop inside
+  // a Block passed to the fiber.
+	Fiber * fiber =  [Fiber current];
+  // NSLog(@"Will be cancelled: %d", fiber.willBeCancelled);
+  return fiber.willBeCancelled;  
+}
+
+-(void) cancel;
+{
+ // As a GCD serial queue keeps the fiber alive, until the queue has been resumed a
+ // and scheduled blocks expired we need to manually cancel a fiber.
+  self.willBeCancelled = YES;
+  if (self.isQueueSuspended){
+    self.willBeCancelled = YES;
+        dispatch_resume(_fiberQueue);
+  }
+  
+  // if the qeueue is not suspended and block not completed
+  // we need to resume the block to give it a chance to quit
+  // after setting willBeCancelled;
+  
+  if (!(self.isBlockCompleted)){
+    [self resume];
+  }
+}
+  
+-(void) finalize;
+{ 
+  [super finalize];
+  dispatch_release(_fiberQueue);
+  // NSLog(@"finalized");
+}
+
+
+
+
+
 
 @end

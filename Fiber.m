@@ -176,8 +176,8 @@
   
 -(void) finalize;
 { 
-  [super finalize];
   dispatch_release(_fiberQueue);
+  [super finalize];
   // NSLog(@"finalized");
 }
 

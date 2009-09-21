@@ -24,7 +24,7 @@
       f1 = f2;
       f2 = f1_old + f2;
       }
-      NSLog(@"returning");
+      NSLog(@"Returning...");
       return nil;
       }];
 
@@ -34,8 +34,8 @@
   }
     
   // cancel a fiber, must be called if block has not been completed
-  // or block has not been started.  Otherwise fiber GC won't happen.
-  // [fibonacciFiber cancel];
+  // or queue has not been started.  Otherwise fiber GC won't happen.
+  [fibonacciFiber cancel];
     
 }
 

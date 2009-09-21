@@ -41,9 +41,6 @@
   dispatch_semaphore_t resume_semaphore = dispatch_semaphore_create(0);
   dispatch_semaphore_t yield_semaphore = dispatch_semaphore_create(0);
   
-  dispatch_retain(yield_semaphore);
-  dispatch_retain(resume_semaphore);  
-  
   _yieldSemaphoreArray  = [[SemaphoredArray alloc] initWithSemaphore:yield_semaphore];
   _resumeSemaphoreArray = [[SemaphoredArray alloc] initWithSemaphore:resume_semaphore];
 
@@ -162,7 +159,7 @@
   self.willBeCancelled = YES;
   if (self.isQueueSuspended){
     self.willBeCancelled = YES;
-        dispatch_resume(_fiberQueue);
+    dispatch_resume(_fiberQueue);
   }
   
   // if the qeueue is not suspended and block not completed

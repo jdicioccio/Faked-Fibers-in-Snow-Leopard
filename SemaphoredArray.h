@@ -7,9 +7,9 @@
 
 @interface SemaphoredArray : NSObject
 {
-  dispatch_semaphore_t _array_semaphore;
-  NSMutableArray * _que;
-  NSMutableArray * _waiting;
+	dispatch_semaphore_t _array_semaphore;
+	NSMutableArray * _que;
+	NSMutableArray * _waiting;
 }
 
 -(void) push:(id) obj;

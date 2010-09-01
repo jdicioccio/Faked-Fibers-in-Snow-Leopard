@@ -4,56 +4,54 @@
 
 @implementation SemaphoredArray
 
-
-
-- (id)initWithSemaphore:(dispatch_semaphore_t) sema;
+- (id)initWithSemaphore:(dispatch_semaphore_t) sema
 {
-  if((self = [super init]))
-  {
-    _que = [NSMutableArray array];
-    _array_semaphore = sema;
-    dispatch_retain(_array_semaphore);
-  }
-  return self;
+	if((self = [super init]))
+	{
+		_que = [[NSMutableArray alloc] init];
+		_array_semaphore = sema;
+		dispatch_retain(_array_semaphore);
+	}
+	return self;
 }
 
--(void)push:(id) obj;
+-(void)push:(id) obj
 {
-  if (!obj)
-  {
-    obj = [NSNull null];    
-  }
-  [_que addObject:obj];
-
-   dispatch_semaphore_signal( _array_semaphore);
+	if (!obj)
+	{
+		obj = [NSNull null];    
+	}
+	[_que addObject:obj];
+	
+	dispatch_semaphore_signal( _array_semaphore);
 };
 
 
--(id)pop;
+-(id)pop
 {
-   
-  id return_val = nil;
-  while(1){
-	if ([_que count] == 0){
- 
-		dispatch_semaphore_wait( _array_semaphore, DISPATCH_TIME_FOREVER);
- 
-  } else {
- 
-     return_val = [_que objectAtIndex:0];
-	  [_que removeObjectAtIndex:0];
-	  return return_val;
-  }
-  }
-}
-  
-  
--(void) finalize;
-{ 
-  [super finalize];
-  dispatch_release(_array_semaphore);
+	
+	id return_val = nil;
+	while(1){
+		if ([_que count] == 0){
+			
+			dispatch_semaphore_wait( _array_semaphore, DISPATCH_TIME_FOREVER);
+			
+		} else {
+			
+			return_val = [_que objectAtIndex:0];
+			[_que removeObjectAtIndex:0];
+			return return_val;
+		}
+	}
 }
 
+
+-(void) dealloc
+{
+	[_que release];
+	dispatch_release(_array_semaphore);
+	[super dealloc];
+}
 
 @end
 

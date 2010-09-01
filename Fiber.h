@@ -7,17 +7,16 @@
 //
 //  Port of ruby Poor Man's Fibers, by Aman Gupta
 
-#import <Cocoa/Cocoa.h>
 #import "typedefs.h"
 
 @class SemaphoredArray;
 @interface Fiber : NSObject {
-  dispatch_queue_t _fiberQueue;
-  SemaphoredArray * _yieldSemaphoreArray;
-  SemaphoredArray * _resumeSemaphoreArray;
-  BOOL _isBlockCompleted;
-  BOOL _isQueueSuspended;
-  BOOL _willBeCancelled;
+	dispatch_queue_t _fiberQueue;
+	SemaphoredArray * _yieldSemaphoreArray;
+	SemaphoredArray * _resumeSemaphoreArray;
+	BOOL _isBlockCompleted;
+	BOOL _isQueueSuspended;
+	BOOL _willBeCancelled;
 }
 
 //property thread
